@@ -42,3 +42,11 @@ tuple of (project/subproject x configuration x task)
 
 
 
+# Hive 
+[Hive Setup|https://cwiki.apache.org/confluence/display/Hive//GettingStarted]
+
+## Data Sources
+1. yahoo finance - use yfinance with pip
+2. quandl
+3. alphaadvantage
+
