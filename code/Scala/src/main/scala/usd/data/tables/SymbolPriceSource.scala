@@ -9,6 +9,6 @@ import org.apache.spark.sql.Dataset
 //   should be something like TradedSymbolsSource or SymbolsPriceSource
 trait SymbolPriceSource {
   def getDate(date: Date, symbols: Seq[String]) : Dataset[Ohlc]
-  def getDateRange(startDate: Date, endDate: Date, symbols: Seq[String]): DataFrame
+  def getDateRange(startDate: Date, endDate: Date, symbols: Seq[String]): Dataset[Ohlc]
 }
 
