@@ -1,0 +1,2 @@
+#! /bin/sh
+spark-shell --jars target/scala-2.13/ccy_2.13-0.1.0.jar,lib/YahooFinanceAPI-3.17.0.jar  
