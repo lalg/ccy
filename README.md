@@ -50,3 +50,6 @@ tuple of (project/subproject x configuration x task)
 2. quandl
 3. alphaadvantage
 
+# Yahoo Finance
+[API|https://javadoc.io/doc/de.sfuhrm/YahooFinanceAPI/latest/yahoofinance/package-summary.html]
+[Github|https://github.com/sfuhrm/yahoofinance-api]
