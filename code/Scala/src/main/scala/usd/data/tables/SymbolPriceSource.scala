@@ -7,7 +7,7 @@ import org.apache.spark.sql.Dataset
 
 // terrible name.
 //   should be something like TradedSymbolsSource or SymbolsPriceSource
-trait FinanceSource {
+trait SymbolPriceSource {
   def getDate(date: Date, symbols: Seq[String]) : Dataset[Ohlc]
   def getDateRange(startDate: Date, endDate: Date, symbols: Seq[String]): DataFrame
 }

@@ -32,8 +32,8 @@ object Ohlc {
 }
 
 
-class YahooFinanceSource(implicit spark: SparkSession)
-    extends FinanceSource
+class YahooPriceSource(implicit spark: SparkSession)
+    extends SymbolPriceSource
     with CcyLogging {
 
 
