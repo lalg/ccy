@@ -7,6 +7,7 @@ import yahoofinance.YahooFinance
 import yahoofinance.histquotes.{Interval, HistoricalQuote}
 import usd.util.DateUtils
 import usd.util.CcyLogging
+import org.apache.spark.sql.Dataset
 
 
 case class Ohlc(
@@ -31,12 +32,13 @@ object Ohlc {
 }
 
 
-class YahooFinanceSource()// (implicit spark: SparkSession)
+class YahooFinanceSource(implicit spark: SparkSession)
     extends FinanceSource
     with CcyLogging {
 
 
   import scala.jdk.CollectionConverters._
+  import spark.implicits._
 
   def dateToCalendar(dt: Date) = {
     val cal = Calendar.getInstance()
@@ -44,8 +46,7 @@ class YahooFinanceSource()// (implicit spark: SparkSession)
     cal
   }
 
-  def getDate(date: Date, symbols: Seq[String]) = ???  
-  def getDateOLD(date: Date, symbols: Seq[String]) = {
+  def getDate(date: Date, symbols: Seq[String]) : Dataset[Ohlc]= {
     val fromCal = dateToCalendar(date)
     val toCal = dateToCalendar(DateUtils(date).nextDay)
 
@@ -66,7 +67,7 @@ class YahooFinanceSource()// (implicit spark: SparkSession)
         Ohlc.valueOf(stock)
       }
 
-    ohlc
+    ohlc.toDS()
   }
 
   def getDateRange(startDate: Date, endDate: Date, symbols: Seq[String]) = ???
