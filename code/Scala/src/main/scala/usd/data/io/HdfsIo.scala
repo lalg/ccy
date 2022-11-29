@@ -9,9 +9,10 @@ import org.apache.spark.sql.SaveMode
 
 class HdfsStorageIo(
   val hdfsPath : String,
-  val format : String) (
+  val format : String = "parquet") (
   implicit spark : SparkSession)
-    extends CcyLogging {
+    extends StorageIo with CcyLogging {
+
 
   def pathExists : Boolean = {
     val conf = spark.sparkContext.hadoopConfiguration
