@@ -4,16 +4,25 @@ import org.apache.spark.sql.SparkSession
 import org.apache.spark.sql.functions.udf
 import java.sql.Date
 
-class YahooPrices(
-  stocksOpt: Option[Seq[String]],
-  fxOpt: Option[Seq[CurrencyPairs.CcyPair]])(implicit
-    spark : SparkSession) {
+trait AssetPrices {
+  val stocks : Seq[String]
+  val fxPairs : Seq[CurrencyPairs.CcyPair]
+
+  def getDate(date: Date) : Dataset[Ohlc]
+  def getDates(startDate: Date, endDate: Date) : Dataset[Ohlc]
+}
+
+trait YahooPrices extends AssetPrices  {
+  val stocks: Seq[String]
+  val fxPairs: seq[CurrencyPairs.CcyPair]
+
+  implicit val  spark : SparkSession
 
   import spark.implicits._
 
   def yahooSymbols = {
-    val fxSymbols = fxOpt.map(fxSeq => fxSeq map (fx => s"${fx.toString}=X"))
-    stocksOpt.getOrElse(Seq.empty) ++ fxSymbols.getOrElse(Seq.empty)
+    val fxSymbols = fxPairs map (ccyp => s"${ccyp.toString}=X"))
+    stocks ++ fxSymbols
   }
 
   val FxSymbolRegex = "(.*)=X".r
