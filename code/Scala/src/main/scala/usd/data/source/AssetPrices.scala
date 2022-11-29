@@ -1,4 +1,4 @@
-package usd.data.tables
+package usd.data.source
 
 trait AssetPrices {
   val stocks : Seq[String]

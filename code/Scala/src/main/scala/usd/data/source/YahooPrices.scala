@@ -1,4 +1,4 @@
-package usd.data.tables
+package usd.data.source
 
 import org.apache.spark.sql.SparkSession
 import org.apache.spark.sql.functions.udf
@@ -21,7 +21,7 @@ trait YahooPrices extends AssetPrices  {
   import spark.implicits._
 
   def yahooSymbols = {
-    val fxSymbols = fxPairs map (ccyp => s"${ccyp.toString}=X"))
+    val fxSymbols = fxPairs map (ccyp => s"${ccyp.toString}=X")
     stocks ++ fxSymbols
   }
 

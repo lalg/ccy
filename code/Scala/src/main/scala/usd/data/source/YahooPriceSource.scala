@@ -1,4 +1,4 @@
-package usd.data.tables
+package usd.data.source
 
 import org.apache.spark.sql.SparkSession
 import java.sql.Date

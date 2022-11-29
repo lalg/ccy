@@ -1,4 +1,4 @@
-package usd.data.tables
+package usd.data.source
 
 import yahoofinance.histquotes.HistoricalQuote
 import java.sql.Date

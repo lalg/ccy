@@ -1,4 +1,4 @@
-package usd.data.tables
+package usd.data.source
 
 object CurrencyPairs extends Enumeration {
   type CcyPair = Value

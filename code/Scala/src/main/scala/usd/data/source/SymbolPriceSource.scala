@@ -1,4 +1,4 @@
-package usd.data.tables
+package usd.data.source
 
 import java.sql.Date
 import yahoofinance.YahooFinance

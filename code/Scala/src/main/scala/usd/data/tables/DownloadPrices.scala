@@ -24,7 +24,6 @@ class DownloadPrices(
       .write
       .partitionBy("year")
       .mode(SaveMode.Append)
-  .parquet(
   
 }
 
