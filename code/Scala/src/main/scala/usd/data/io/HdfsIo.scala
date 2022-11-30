@@ -25,11 +25,6 @@ class HdfsStorageIo(
     spark.read.format(format).load(hdfsPath)
   }
 
-  def readPath(paths: String*) : Option[DataFrame] = {
-    None
-    
-  }
-  
   def write(df: DataFrame, mode: SaveMode, partitionColumns: String*) = {
     logger.info(s"${hdfsPath} -- ${format} write")
     df.write

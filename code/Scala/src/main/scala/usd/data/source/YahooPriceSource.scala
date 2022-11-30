@@ -50,12 +50,14 @@ class YahooPriceSource(implicit spark: SparkSession)
     symbols.foreach (symbol => logger.info(stockMap(symbol).toString()))
 
     val ohlc =
-      symbols.map {case symbol =>
-        val stock = stockMap(symbol).getHistory.asScala.head
-        Ohlc.valueOf(stock)
+      symbols.foldLeft(List.empty[HistoricalQuote]) {
+        case (acc, symbol) =>
+          stockMap(symbol).getHistory().asScala.toList ++ acc
       }
 
-    ohlc.toDS()
+    ohlc.map (Ohlc.valueOf _)
+      .toSeq
+      .toDS()
   }
 
 

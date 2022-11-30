@@ -1,11 +1,13 @@
 package usd.data.tables
 
-import usd.data.config.Env
 import org.apache.spark.sql.DataFrame
-import usd.util.DateUtils
 import org.apache.spark.sql.SaveMode
+import java.sql.Date
+import usd.util.DateUtils
+import usd.data.config.CcyEnv
+import usd.data.io.StorageIo
 
-trait Elemental extends Env {
+trait Elemental  {
   // abstract
   val storageIo : StorageIo
   val partitionColumns : Seq[String]

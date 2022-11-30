@@ -4,17 +4,9 @@ import org.apache.spark.sql.SparkSession
 import org.apache.spark.sql.functions.udf
 import java.sql.Date
 
-trait AssetPrices {
-  val stocks : Seq[String]
-  val fxPairs : Seq[CurrencyPairs.CcyPair]
-
-  def getDate(date: Date) : Dataset[Ohlc]
-  def getDates(startDate: Date, endDate: Date) : Dataset[Ohlc]
-}
-
 trait YahooPrices extends AssetPrices  {
   val stocks: Seq[String]
-  val fxPairs: seq[CurrencyPairs.CcyPair]
+  val fxPairs: Seq[CurrencyPairs.CcyPair]
 
   implicit val  spark : SparkSession
 
@@ -35,13 +27,16 @@ trait YahooPrices extends AssetPrices  {
       })
 
   def getDate(date: Date) = {
-    val df =  new YahooPriceSource().getDate(date, yahooSymbols)
-    df.withColumn("symbol", unmapFxUdf($"symbol"))
+    new YahooPriceSource().getDate(date, yahooSymbols)
+      .withColumn("symbol", unmapFxUdf($"symbol"))
+      .as[Ohlc]
+
   }
 
   def getDates(startDate: Date, endDate: Date) = {
-    val df = new YahooPriceSource().getDateRange(startDate, endDate, yahooSymbols)
-    df.withColumn("symbol", unmapFxUdf($"symbol"))
+    new YahooPriceSource().getDateRange(startDate, endDate, yahooSymbols)
+      .withColumn("symbol", unmapFxUdf($"symbol"))
+      .as[Ohlc]
   }
 
 }

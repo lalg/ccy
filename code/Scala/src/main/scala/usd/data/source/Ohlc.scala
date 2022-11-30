@@ -25,7 +25,7 @@ object Ohlc {
       high = stock.getHigh.doubleValue,
       low = stock.getLow.doubleValue,
       close = stock.getClose.doubleValue,
-      volume = stock.getVolume)
+      volume = stock.getVolume().longValue())
   }
 }
 

@@ -53,3 +53,6 @@ tuple of (project/subproject x configuration x task)
 # Yahoo Finance
 [API|https://javadoc.io/doc/de.sfuhrm/YahooFinanceAPI/latest/yahoofinance/package-summary.html]
 [Github|https://github.com/sfuhrm/yahoofinance-api]
+
+# Emacs
+[Enable UI|https://emacs-lsp.github.io/lsp-mode/tutorials/how-to-turn-off/]
