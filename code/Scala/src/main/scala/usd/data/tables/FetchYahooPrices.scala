@@ -2,13 +2,15 @@ package usd.data.tables
  
 import java.sql.Date
 import org.apache.spark.sql.SparkSession
-import usd.data.config.CcyEnv
-import org.apache.spark.sql.SaveMode
-import usd.data.source.YahooPrices
-import usd.data.source.CurrencyPairs
 import org.apache.spark.sql.DataFrame
+import org.apache.spark.sql.functions.udf
+import usd.data.config.CcyEnv
+import usd.data.source.CurrencyPairs
 import usd.data.io.HdfsStorageIo
 import usd.util.CcyLogging
+import usd.data.source.YahooPriceSource
+import usd.data.source.Ohlc
+
 
 // end date being absent means one day duration
 class FetchYahooPrices(
@@ -17,23 +19,37 @@ class FetchYahooPrices(
   (implicit
     val spark : SparkSession,
     env: CcyEnv)
-    extends YahooPrices
-    with Elemental
+    extends Elemental
     with CcyLogging {
 
 
   import spark.implicits._
-  import org.slf4j.LoggerFactory
+
+  def yahooSymbols = {
+    val fxSymbols = fxPairs map (ccyp => s"${ccyp.toString}=X")
+    stocks ++ fxSymbols
+  }
 
   val partitionColumns = Seq("year")
-  val storageIo =
-    new HdfsStorageIo(hdfsPath=s"${env.env.hdfsRoot}/${FetchYahooPrices.tableName}")
+  val FxSymbolRegex = "(.*)=X".r
 
-  def processDates(startDate: Date, endDate: Date)  : DataFrame = {
+  val unmapFxUdf =
+    udf((symbol: String) =>
+      symbol match {
+        case FxSymbolRegex(fxSymbol) => fxSymbol
+        case _ => symbol
+      })
+
+  val storageIo =
+    new HdfsStorageIo(
+      hdfsPath=s"${env.env.hdfsRoot}/${FetchYahooPrices.tableName}/")
+
+  def processDates(startDate: Date, endDate: Date) = {
     logger.info(s"{[${startDate},${endDate}) - process dates  range")
-    getDates(startDate, endDate)
-      .toDF()
+    new YahooPriceSource().getDateRange(startDate, endDate, yahooSymbols)
+      .withColumn("symbol", unmapFxUdf($"symbol"))
   }
+
 }
 
 object FetchYahooPrices {

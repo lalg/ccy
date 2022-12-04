@@ -23,9 +23,9 @@ case class ElementalConf(arguments: Seq[String])
 }
 
 object ElementalJob extends CcyLogging {
-  def main(args: Array[String]) = {
+  def main(args: Array[String])(implicit spark : SparkSession) = {
     val conf = new ElementalConf(args.toSeq)
-    implicit val spark : SparkSession = SparkBase("elemental-job").spark
+//    implicit val spark : SparkSession = SparkBase("elemental-job").spark
     implicit val env =
       new CcyEnv(conf.envName()) 
 
@@ -34,8 +34,7 @@ object ElementalJob extends CcyLogging {
         new FetchYahooPrices (
           stocks= Seq("SPY"),
           fxPairs = Seq(CurrencyPairs.AUDUSD))(spark, env)
-          .processDates(conf.fromDate, conf.toDate)
-          .show()
+          .processDatesAndSave(conf.fromDate, conf.toDate)
       case _ =>
         throw new Exception("not implemented")
     }

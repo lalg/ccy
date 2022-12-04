@@ -2,7 +2,7 @@ package usd.data.config
 
 import org.apache.spark.sql.SparkSession
 
-
+// spark session required by sub-classes
 class CcyEnv(val envName: String) (implicit val spark: SparkSession)
     extends Serializable {
 

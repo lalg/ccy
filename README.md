@@ -45,6 +45,11 @@ tuple of (project/subproject x configuration x task)
 # Hive 
 [Hive Setup|https://cwiki.apache.org/confluence/display/Hive//GettingStarted]
 
+# hdfs
+bin/hdfs namenode format
+sbin/start-dfs.sh
+
+
 ## Data Sources
 1. yahoo finance - use yfinance with pip
 2. quandl
@@ -56,3 +61,4 @@ tuple of (project/subproject x configuration x task)
 
 # Emacs
 [Enable UI|https://emacs-lsp.github.io/lsp-mode/tutorials/how-to-turn-off/]
+

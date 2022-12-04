@@ -1,14 +1,16 @@
 package usd.data.source
 
+object Foo {}
+/*
 import org.apache.spark.sql.SparkSession
 import org.apache.spark.sql.functions.udf
 import java.sql.Date
-
-trait YahooPrices extends AssetPrices  {
-  val stocks: Seq[String]
-  val fxPairs: Seq[CurrencyPairs.CcyPair]
-
-  implicit val  spark : SparkSession
+import usd.data.tables.Elemental
+class YahooPrices(
+  val stocks: Seq[String],
+  val fxPairs: Seq[CurrencyPairs.CcyPair])(
+  implicit spark : SparkSession) 
+    extends Elemental  {
 
   import spark.implicits._
 
@@ -43,3 +45,4 @@ trait YahooPrices extends AssetPrices  {
 
 
 
+ */

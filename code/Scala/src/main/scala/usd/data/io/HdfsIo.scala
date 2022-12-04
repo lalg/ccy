@@ -6,6 +6,7 @@ import org.apache.hadoop.fs.FileSystem
 import org.apache.hadoop.fs.Path
 import org.apache.spark.sql.DataFrame
 import org.apache.spark.sql.SaveMode
+import org.apache.spark.sql.Encoder
 
 class HdfsStorageIo(
   val hdfsPath : String,
@@ -13,6 +14,7 @@ class HdfsStorageIo(
   implicit spark : SparkSession)
     extends StorageIo with CcyLogging {
 
+  import spark.implicits._
 
   def pathExists : Boolean = {
     val conf = spark.sparkContext.hadoopConfiguration
@@ -34,4 +36,5 @@ class HdfsStorageIo(
       .save(hdfsPath)
   }
 }
+
 

@@ -26,7 +26,7 @@ val sparkMLlib = "org.apache.spark" %% "spark-mllib" % "3.3.0" % "provided"
 val hadoopfs = "org.apache.hadoop" % "hadoop-hdfs" % "3.3.0" % "provided"
 val yahoo = "com.yahoofinance-api" % "YahooFinanceAPI" % "3.17.0"
 val scallop = "org.rogach" %% "scallop" % "4.1.0"
-
+val logback = "ch.qos.logback" % "logback-classic" % "1.0.9"
 lazy val ccy =
   (project in file("."))
     .settings(
@@ -36,7 +36,6 @@ lazy val ccy =
       libraryDependencies += hadoopfs,
       libraryDependencies += scalaTest,
       libraryDependencies += yahoo,
-      libraryDependencies += scallop,
-      libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.0.9")
+      libraryDependencies += scallop)
  
 
