@@ -6,6 +6,7 @@ import org.apache.spark.sql.SparkSession
 class CcyEnv(val envName: String) (implicit val spark: SparkSession)
     extends Serializable {
 
+  // this does not need to be an implicit
   implicit val env : Env = envName match {
     case "prod" => ProdEnv
     case "dev" => DevEnv
