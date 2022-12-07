@@ -7,11 +7,11 @@ trait Env {
 
 case object ProdEnv extends Env {
   def envName = "prod"
-  def hdfsRoot = "file:/Users/lg/spark-storage/usd/prod"
+  def hdfsRoot = "file:/Users/lg/Work/spark-storage/usd/prod"
 }
 
 case object DevEnv extends Env {
   def envName = "dev"
-  def hdfsRoot = "file:/Users/lg/spark-storage/usd/dev"
+  def hdfsRoot = "file:/Users/lg/Work/spark-storage/usd/dev"
 }
 

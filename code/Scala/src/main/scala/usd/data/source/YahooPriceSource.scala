@@ -24,18 +24,29 @@ class YahooPriceSource(implicit spark: SparkSession)
     cal
   }
 
-  def getDate(date: Date, symbols: Seq[String]) : Dataset[Ohlc]= {
-    val fromCal = dateToCalendar(date)
-    val toCal = dateToCalendar(DateUtils(date).nextDay)
+  // stupid yahoo returns an extra day for FX symbols
+  def filterToRange(df: Dataset[Ohlc], startDate: Date, endDate: Date) = 
+    df.filter(df("date") >= startDate && df("date") < endDate) 
+
+  def getDate(startDate: Date, symbols: Seq[String]) : Dataset[Ohlc]= {
+    val nextDate = DateUtils(startDate).nextDay
+    val fromCal = dateToCalendar(startDate)
+    val toCal = dateToCalendar(nextDate)
     logger.info(s"${fromCal} -- start date")
-    logger.info(s"${toCal} -- end date")    
-    getCalRange(fromCal, toCal, Interval.MONTHLY, symbols)
+    logger.info(s"${toCal} -- end date")
+    filterToRange(
+      getCalRange(fromCal, toCal, Interval.DAILY, symbols),
+      startDate,
+      nextDate)
   }
 
   def getDateRange(startDate: Date, endDate: Date, symbols: Seq[String]) = {
     val fromCal = dateToCalendar(startDate)
     val toCal = dateToCalendar(endDate)
-    getCalRange(fromCal, toCal, Interval.DAILY, symbols)
+    filterToRange(
+      getCalRange(fromCal, toCal, Interval.DAILY, symbols),
+      startDate,
+      endDate)
   }
 
   def getCalRange(
@@ -55,12 +66,10 @@ class YahooPriceSource(implicit spark: SparkSession)
           stockMap(symbol).getHistory().asScala.toList ++ acc
       }
 
-    ohlc.map (Ohlc.valueOf _)
+    ohlc.flatMap (Ohlc.valueOf _)
       .toSeq
       .toDS()
   }
-
-
 }
 
 object YahooPriceSource {

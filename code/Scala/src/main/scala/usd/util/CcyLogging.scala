@@ -1,10 +1,8 @@
 package usd.util
 
 import org.apache.logging.log4j.LogManager
-
-// deprecated
 trait CcyLogging {
-  val loggerName = this.getClass.getName
+  val loggerName = this.getClass.getName()
   lazy val logger = LogManager.getLogger(loggerName)
 }
 
