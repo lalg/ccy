@@ -7,7 +7,7 @@ import usd.data.source.Ohlc
 
 trait ElementalTables extends CcyEnv {
 
-  def hdfsPath(tableName: String) = s"${env.hdfsRoot}/${tableName}"
+  private def hdfsPath(tableName: String) = s"${env.hdfsRoot}/${tableName}"
 
   val yahooPrices = new HdfsStorageIo(hdfsPath(FetchYahooPrices.tableName))
 }
