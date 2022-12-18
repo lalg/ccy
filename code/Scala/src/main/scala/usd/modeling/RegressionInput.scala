@@ -8,7 +8,8 @@ case class RegressionInput(
   startDate : Date,
   endDate : Date,
   featureColumns : Seq[String],
-  modelingDf : DataFrame) {
+  modelingDf : DataFrame,
+  rowCount : Long) {
 
   def labelCount =
     modelingDf
