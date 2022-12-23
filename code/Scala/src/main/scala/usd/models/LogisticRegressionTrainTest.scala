@@ -50,7 +50,7 @@ trait LogisticRegressionTrainTest
   def finalTraining = trainWith(finalTrainingInput)
   def trainAndSave(pipelineIo : PipelineModelIo) =
     fitAndSave(trainingInput, pipelineIo)
-  def finalTrainAndSave(pipelineIo : PipelineModelIo) =
+  def finalTrainingAndSave(pipelineIo : PipelineModelIo) : Unit =
     fitAndSave(finalTrainingInput, pipelineIo)
 
   // testing

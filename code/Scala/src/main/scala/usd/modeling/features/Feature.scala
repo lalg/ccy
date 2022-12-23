@@ -16,10 +16,10 @@ trait Feature {
 }
 
 trait CategoricalFeature extends Feature {
-  val columnName = List(featureName)
+  def columnName = List(featureName)
   override def isCategorical = true
 }
 
 trait ContinuousFeature extends Feature {
-  val columnNames = List(featureName)
+  def columnNames = List(featureName)
 }
