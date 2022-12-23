@@ -33,7 +33,7 @@ class CcyPairModelInput
             $"date" >= startDate && $"date" < endDate)
         .withColumn("lagged", lead("open", daysInHorizon) over wspec)
         .na.drop(Array("lagged"))
-        .withColumn("label", when($"lagged" > $"open", 1).otherwise(0))
+        .withColumn("label", when($"lagged" > $"open", 1.0).otherwise(0.0))
         .drop("lagged")
         .cache()
 

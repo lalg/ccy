@@ -87,7 +87,7 @@ trait LogisticRegressionTrainTest
   }
 
   def evaluationSummary(mt: ModelTransformer, es: EvaluationSummary) = {
-    val predictionCounts = es.predictions.groupBy("predictions").count()
+    val predictionCounts = es.predictions.groupBy("prediction").count()
     val labelCounts = es.predictions.groupBy("label").count()
 
     List(

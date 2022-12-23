@@ -2,7 +2,10 @@ package usd.modeling
 import java.sql.Date
 
 import org.apache.spark.sql.SparkSession
+import org.apache.spark.sql.functions._
 import org.apache.spark.ml.classification.LogisticRegression
+import org.apache.spark.ml.classification.BinaryLogisticRegressionSummary
+
 import usd.models.LogisticRegressionTrainTest
 import usd.modeling.features.{Feature, CcyPairFeatures}
 import usd.data.config.{CcyEnv, ElementalTables}
@@ -12,6 +15,7 @@ import usd.data.source.CurrencyPairs
 import usd.util.{DateUtils,CcyLogging}
 import usd.apps.CcyPairConf
 import usd.modeling.features.SecurityPrices
+
 
 class CcyModel(
   val conf : CcyPairConf,
@@ -62,9 +66,46 @@ class CcyModel(
     val (preds, modelTrans, trainSumm, evalSumm) = trainAndTest
 
     // training
-    logger.info("------------------")
     logger.info("TRAINING SUMMARY")
-    logger.info()
+    logger.info("----------------")
+    logTrainingSummary(modelTrans, trainSumm)
+
+    val objectiveHistory = trainSumm.objectiveHistory
+    logger.info("OBJECTIVE HISTORY:")
+    logger.info("------------------")
+    objectiveHistory.foreach(loss => logger.info(loss))
+
+    logger.info("TESTING SUMMARY:")
+    logger.info("----------------")
+    logEvaluationSummary(modelTrans, evalSumm)
+    showPrecisionRecall(evalSumm)
+  }
+
+  def logTrainingSummary(mt:
+      ModelTransformer, ts: TrainingSummary) = {
+    val kv = trainingSummary(mt, ts)
+    val names = kv("features").split(", ")
+    val coeffs = kv("coefficients").split(", ")
+    logger.info(s"""areaUnderROC"\t\t ${kv("areaUnderROC")}""")
+    logger.info(s"""areaUnderPR:\t\t ${kv("areaUnderPR")}""")
+    logger.info(s"""intercept:\t\t ${kv("intercept")}""")
+    logger.info("coefficients:")
+    names.zip(coeffs) foreach {case (k, v) => logger.info(s"\t$k: \t$v")}
+  }
+
+  def logEvaluationSummary(mt: ModelTransformer, es: EvaluationSummary) =
+    evaluationSummary(mt, es)
+      .foreach {case (k,v) => logger.info(s"\t$k: \t$v")}
+
+  def precisionRecall(binarySummary: BinaryLogisticRegressionSummary) =
+    binarySummary.precisionByThreshold
+      .join(binarySummary.recallByThreshold, Seq("threshold"))
+      .join(binarySummary.fMeasureByThreshold, Seq("threshold"))
+      .orderBy(col("threshold").desc)
+
+  def showPrecisionRecall(binarySummary: BinaryLogisticRegressionSummary) = {
+    val pr = precisionRecall(binarySummary)
+    pr.show(pr.count().toInt, false)
   }
 }
 
