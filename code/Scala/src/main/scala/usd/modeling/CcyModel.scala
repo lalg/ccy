@@ -15,6 +15,7 @@ import usd.data.source.CurrencyPairs
 import usd.util.{DateUtils,CcyLogging}
 import usd.apps.CcyPairConf
 import usd.modeling.features.SecurityPrices
+import usd.modeling.features.Returns
 
 
 class CcyModel(
@@ -84,13 +85,13 @@ class CcyModel(
   def logTrainingSummary(mt:
       ModelTransformer, ts: TrainingSummary) = {
     val kv = trainingSummary(mt, ts)
-    val names = kv("features").split(", ")
-    val coeffs = kv("coefficients").split(", ")
+    val names = kv("features").split(",")
+    val coeffs = kv("coefficients").split(",")
     logger.info(s"""areaUnderROC"\t\t ${kv("areaUnderROC")}""")
     logger.info(s"""areaUnderPR:\t\t ${kv("areaUnderPR")}""")
     logger.info(s"""intercept:\t\t ${kv("intercept")}""")
     logger.info("coefficients:")
-    names.zip(coeffs) foreach {case (k, v) => logger.info(s"\t$k: \t$v")}
+    names.zip(coeffs) foreach {case (k, v) => logger.info(s"WHY\t$k: \t$v")}
   }
 
   def logEvaluationSummary(mt: ModelTransformer, es: EvaluationSummary) =
@@ -115,9 +116,11 @@ object CcyModel {
     spark : SparkSession,
     env: CcyEnv with ElementalTables with CcyPairTables) = {
 
+    val spy = new SecurityPrices("SPY")
     val allFeatures =
       List(
-        new SecurityPrices("SPY"))
+        new Returns(spy, 10))
+        
     new CcyModel(conf, allFeatures)
   }
 }

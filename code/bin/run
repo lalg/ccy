@@ -1,0 +1,17 @@
+#! /bin/sh
+ccyJar=target/scala-2.13/ccy_2.13-0.1.0.jar
+yahoo=lib/YahooFinanceAPI-3.17.0.jar
+scallop=lib/scallop_2.13-4.1.0.jar
+set -x
+spark-submit --jars $ccyJar,$yahoo,$scallop \
+    --class "usd.apps.CcyPairApp"	\
+    $ccyJar				\
+    --currency-pair AUDUSD		\
+    --env-name dev			\
+    --process EVALUATE		\
+    --train-from-date 2006-01-03	\
+    --train-to-date 2021-01-01	\
+    --test-from-date 2021-01-01	\
+    --test-to-date 2022-01-01
+
+	     

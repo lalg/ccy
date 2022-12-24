@@ -36,8 +36,16 @@ case class CcyPairConf(arguments: Seq[String])
 
 
 object CcyPairApp {
-  def main(args : Array[String])(implicit
-    spark:SparkSession) = {
+  def main(args : Array[String]) : Unit = {
+    implicit val spark =
+      SparkSession.builder()
+        .appName("ccyPair")
+        .getOrCreate()
+    app(args)
+  }
+
+  def app(args : Array[String])(implicit
+    spark:SparkSession) : Unit = {
     val conf = CcyPairConf(args.toSeq)
 
     implicit val env =
