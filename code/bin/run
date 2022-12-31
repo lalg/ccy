@@ -10,8 +10,8 @@ spark-submit --jars $ccyJar,$yahoo,$scallop \
     --env-name dev			\
     --process EVALUATE		\
     --train-from-date 2006-01-03	\
-    --train-to-date 2021-01-01	\
-    --test-from-date 2021-01-01	\
+    --train-to-date 2019-01-01	\
+    --test-from-date 2019-01-01	\
     --test-to-date 2022-01-01
 
 	     

@@ -52,7 +52,7 @@ trait CcyPairFeatures
 
     new VectorAssembler()
       .setInputCols(continousNames)
-      .setOutputCol("continuosFeatures")
+//      .setOutputCol("contfeat")
   }
 
   def assemblerStages: Array[PipelineStage] = {

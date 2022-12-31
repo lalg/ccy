@@ -16,6 +16,7 @@ import usd.util.{DateUtils,CcyLogging}
 import usd.apps.CcyPairConf
 import usd.modeling.features.SecurityPrices
 import usd.modeling.features.Returns
+import usd.modeling.features.MovingAvg
 
 
 class CcyModel(
@@ -90,8 +91,9 @@ class CcyModel(
     logger.info(s"""areaUnderROC"\t\t ${kv("areaUnderROC")}""")
     logger.info(s"""areaUnderPR:\t\t ${kv("areaUnderPR")}""")
     logger.info(s"""intercept:\t\t ${kv("intercept")}""")
+    logger.info(s"""labels:\t\t ${kv("labels")}""")    
     logger.info("coefficients:")
-    names.zip(coeffs) foreach {case (k, v) => logger.info(s"WHY\t$k: \t$v")}
+    names.zip(coeffs) foreach {case (k, v) => logger.info(s"\t$k: \t$v")}
   }
 
   def logEvaluationSummary(mt: ModelTransformer, es: EvaluationSummary) =
@@ -116,10 +118,10 @@ object CcyModel {
     spark : SparkSession,
     env: CcyEnv with ElementalTables with CcyPairTables) = {
 
-    val spy = new SecurityPrices("SPY")
+    val spy = new MovingAvg(new SecurityPrices("SPY"), 5)
     val allFeatures =
       List(
-        new Returns(spy, 10))
+        new Returns(spy, 20))
         
     new CcyModel(conf, allFeatures)
   }

@@ -75,6 +75,7 @@ trait LogisticRegressionTrainTest
     transform(predictionInput, pipeModelIo)
 
   def trainingSummary(mt: ModelTransformer, ts: TrainingSummary) = {
+    val labelCounts = ts.predictions.groupBy("label").count()    
     List(
       "areaUnderROC" -> s"${ts.areaUnderROC}",
       "areaUnderPR" -> s"${areaUnderPr(ts)}",
@@ -82,7 +83,8 @@ trait LogisticRegressionTrainTest
         (LogisticRegressionTrainTest.getFeatureNames(ts.predictions, mt.getFeaturesCol)
           .mkString(",")),
       "coefficients" -> mt.coefficients.toArray.mkString(","),
-      "intercept" -> (if (mt.getFitIntercept) mt.intercept.toString else "0"))
+      "intercept" -> (if (mt.getFitIntercept) mt.intercept.toString else "0"),
+      "labels" -> s"""${labelCounts.collect().mkString(",")}""".stripMargin)    
     .toMap
   }
 
