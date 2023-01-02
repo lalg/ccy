@@ -19,6 +19,7 @@ trait CcyPairFeatures
     with CcyLogging {
 
   val features : List[Feature]
+  val featuresSelected: List[String]
   def designMatrixIo : CcyDesignMatrixIo
 
   implicit val spark : SparkSession
@@ -26,15 +27,20 @@ trait CcyPairFeatures
 
   import spark.implicits._
 
+  def featureIsSelected(f: String) = 
+    featuresSelected.isEmpty || featuresSelected.contains(f)
+
   def stringIndexers =
     features.filter(_.isCategorical)
-      .flatMap(f =>
-        f.columnNames.map (col =>
+      .flatMap(f => f.columnNames)
+      .flatMap(f => if (featureIsSelected(f)) Some(f) else None)
+      .map(f =>
           new StringIndexer()
-            .setInputCol(col)
-            .setOutputCol(s"${col}__indexer")
-            .setHandleInvalid("keep")))
-      .toArray
+            .setInputCol(f)
+            .setOutputCol(s"${f}__indexer")
+            .setHandleInvalid("keep"))
+      .toArray 
+
 
   def oneHotEncoders =
     stringIndexers
@@ -44,15 +50,16 @@ trait CcyPairFeatures
           .setOutputCol(s"${si.getInputCol}__vec"))
 
   def continuousAssember = {
-    val continousNames =
+    val continuosNames =
       features
         .filter(f => !f.isCategorical)
         .flatMap(_.columnNames)
+        .flatMap(f => if (featureIsSelected(f)) Some(f) else None)
         .toArray
 
     new VectorAssembler()
-      .setInputCols(continousNames)
-//      .setOutputCol("contfeat")
+      .setInputCols(continuosNames)
+      .setOutputCol("cf")
   }
 
   def assemblerStages: Array[PipelineStage] = {

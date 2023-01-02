@@ -7,21 +7,19 @@ import org.apache.spark.ml.classification.LogisticRegression
 import org.apache.spark.ml.classification.BinaryLogisticRegressionSummary
 
 import usd.models.LogisticRegressionTrainTest
-import usd.modeling.features.{Feature, CcyPairFeatures}
 import usd.data.config.{CcyEnv, ElementalTables}
 import usd.data.config.CcyPairTables
 import usd.data.io.{CcyDesignMatrixIo,PipelineModelIo}
 import usd.data.source.CurrencyPairs
 import usd.util.{DateUtils,CcyLogging}
 import usd.apps.CcyPairConf
-import usd.modeling.features.SecurityPrices
-import usd.modeling.features.Returns
-import usd.modeling.features.MovingAvg
+import usd.modeling.features._
 
 
 class CcyModel(
   val conf : CcyPairConf,
-  val features : List[Feature])(
+  val features : List[Feature],
+  val featuresSelected : List[String] = List.empty)(
   implicit
     val spark : SparkSession,
     val env : CcyEnv with ElementalTables with CcyPairTables)
@@ -45,9 +43,7 @@ class CcyModel(
         ccyPair, startDate, endDate, conf.horizon)
 
     designMatrix(ri).modelingDf
-    // DELETE
       .na.drop("any")
-
   }
 
   def testingInput =
@@ -61,7 +57,6 @@ class CcyModel(
     val startDate =
       new DateUtils(predictionDate).plusDays(-conf.horizon)
     buildDesignMatrix(startDate, predictionDate)
-
   }
 
   def evaluate() = {
@@ -118,12 +113,18 @@ object CcyModel {
     spark : SparkSession,
     env: CcyEnv with ElementalTables with CcyPairTables) = {
 
-    val spy = new MovingAvg(new SecurityPrices("SPY"), 5)
-    val allFeatures =
-      List(
-        new Returns(spy, 20))
-        
-    new CcyModel(conf, allFeatures)
+    new CcyModel(conf, allFeatureData, conf.selectedFeatures)
+  }
+
+  def allFeatureData(implicit
+    spark:SparkSession,
+    env: CcyEnv with ElementalTables with CcyPairTables) = {
+
+    val spyPx = new SecurityPrices("SPY")
+    val spySma = new MovingAverage(spyPx.featureName, 5, 10, 15)
+    (List(spyPx, spySma) ++
+      spySma.columnNames.map (colName => new Returns(colName, 5, 10)))
   }
 }
+
 

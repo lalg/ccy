@@ -21,8 +21,6 @@ class MovingAvg(baseFeature : Feature, horizons: Int *) (implicit
   def feature(input: RegressionInput) = {
     val inputFeature = baseFeature.feature(input)
 
-    val wspec = 
-
     assert(baseFeature.columnNames.length == 1)
     val baseFeatCol = baseFeature.columnNames.head
 
