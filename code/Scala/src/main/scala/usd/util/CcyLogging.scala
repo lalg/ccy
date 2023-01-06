@@ -6,10 +6,8 @@ import org.apache.log4j.Logger
 
 trait CcyLogging {
   val loggerName = this.getClass.getName()
-  println(loggerName)
-  lazy val logger = LogManager.getLogger("usd")
-  Logger.getLogger("usd").setLevel(Level.INFO)
-  println(logger.getLevel())
+  lazy val logger = LogManager.getLogger(loggerName)
+  Logger.getLogger(loggerName).setLevel(Level.INFO)
 }
 
 // import org.slf4j.LoggerFactory

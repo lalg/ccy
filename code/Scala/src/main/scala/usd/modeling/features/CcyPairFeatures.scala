@@ -1,6 +1,7 @@
 package usd.modeling.features
 
-import org.apache.spark.sql.SparkSession
+import org.apache.spark.sql.{DataFrame, SparkSession}
+import org.apache.spark.sql.functions._
 import org.apache.spark.ml.PipelineStage
 import org.apache.spark.ml.feature.StringIndexer
 import org.apache.spark.ml.feature.OneHotEncoder
@@ -110,6 +111,31 @@ trait CcyPairFeatures
     designMatrixIo.io.write(
       designMatrix(baseRi).modelingDf,
       SaveMode.Overwrite)
+
+
+  // for now only continuous features
+  def crossCorrelation(baseRi: RegressionInput) : DataFrame = {
+    val filledRi = designMatrix(baseRi)
+    val featurePairs =
+      filledRi.featureColumns.flatMap ((f : String) =>
+        if (featureIsSelected(f)) Some(f) else None)
+        .combinations(2)
+        .toList
+
+    val dm = filledRi.modelingDf
+
+    def correlation(f1: String, f2: String) =
+      dm.agg(corr(f1, f2) as "__corr__")
+        .head()
+        .getAs[Double]("__corr__")
+
+    featurePairs
+      .map (_.toList match {
+        case f1::f2::Nil => (f1, f2, correlation(f1, f2))
+        case _ => throw new Exception("impossible")
+      })
+    .toDF("f1", "f2", "correlation")
+  }
 }
 
 

@@ -121,9 +121,9 @@ object CcyModel {
     env: CcyEnv with ElementalTables with CcyPairTables) = {
 
     val spyPx = new SecurityPrices("SPY")
-    val spySma = new MovingAverage(spyPx.featureName, 5, 10, 15)
+    val spySma = new MovingAverage(spyPx.featureName, 5, 10, 15, 20)
     (List(spyPx, spySma) ++
-      spySma.columnNames.map (colName => new Returns(colName, 5, 10)))
+      spySma.columnNames.map (colName => new Returns(colName, 5, 10, 15, 20)))
   }
 }
 
