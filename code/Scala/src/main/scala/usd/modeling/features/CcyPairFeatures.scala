@@ -114,7 +114,7 @@ trait CcyPairFeatures
 
 
   // for now only continuous features
-  def crossCorrelation(baseRi: RegressionInput) : DataFrame = {
+  def crossCorrelationOLD(baseRi: RegressionInput) : DataFrame = {
     val filledRi = designMatrix(baseRi)
     val featurePairs =
       filledRi.featureColumns.flatMap ((f : String) =>
@@ -123,6 +123,24 @@ trait CcyPairFeatures
         .toList
 
     val dm = filledRi.modelingDf
+
+    def correlation(f1: String, f2: String) =
+      dm.agg(corr(f1, f2) as "__corr__")
+        .head()
+        .getAs[Double]("__corr__")
+
+    featurePairs
+      .map (_.toList match {
+        case f1::f2::Nil => (f1, f2, correlation(f1, f2))
+        case _ => throw new Exception("impossible")
+      })
+    .toDF("f1", "f2", "correlation")
+  }
+
+  def crossCorrelation(ri: RegressionInput) : DataFrame = {
+    val featurePairs = ri.featureColumns.combinations(2).toList
+
+    val dm = ri.modelingDf
 
     def correlation(f1: String, f2: String) =
       dm.agg(corr(f1, f2) as "__corr__")

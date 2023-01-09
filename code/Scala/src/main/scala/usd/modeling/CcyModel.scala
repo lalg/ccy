@@ -37,14 +37,17 @@ class CcyModel(
   // Members declared in usd.models.ModelInput
   val modelInput = new CcyPairModelInput
 
-  def buildDesignMatrix(startDate: Date, endDate: Date) = {
-    val ri =
-      modelInput.baseModelingData(
-        ccyPair, startDate, endDate, conf.horizon)
-
-    designMatrix(ri).modelingDf
-      .na.drop("any")
+  def featuredRegressionInput(startDate: Date, endDate: Date) = {
+    val baseRi = 
+      modelInput
+        .baseModelingData(ccyPair, startDate, endDate, conf.horizon)
+    designMatrix(baseRi)
   }
+    
+  def buildDesignMatrix(startDate: Date, endDate: Date) = 
+    featuredRegressionInput(startDate, endDate)
+      .modelingDf
+      .na.drop("any")
 
   def testingInput =
     buildDesignMatrix(conf.testStartDate, conf.testEndDate)
@@ -121,9 +124,9 @@ object CcyModel {
     env: CcyEnv with ElementalTables with CcyPairTables) = {
 
     val spyPx = new SecurityPrices("SPY")
-    val spySma = new MovingAverage(spyPx.featureName, 5, 10, 15, 20)
+    val spySma = new MovingAverage(spyPx.columnNames.head, 3, 5, 10, 15, 20)
     (List(spyPx, spySma) ++
-      spySma.columnNames.map (colName => new Returns(colName, 5, 10, 15, 20)))
+      spySma.columnNames.map (colName => new Returns(colName, 3, 5, 10, 15, 20)))
   }
 }
 

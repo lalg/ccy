@@ -11,9 +11,10 @@ case class RegressionInput(
   modelingDf : DataFrame,
   rowCount : Long) {
 
+  val labelName = "label"
   def labelCount =
     modelingDf
-      .groupBy("label")
+      .groupBy(labelName)
       .agg(count("*"))
 
   def featuresDate =
